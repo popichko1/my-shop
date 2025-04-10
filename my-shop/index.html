@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>????? ???????? ?? ??????????</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+--primary-color: #2e8b57;
+--secondary-color: #3cb371;
+--accent-color: #ff7f50;
+--light-color: #f5f5f5;
+--dark-color: #333;
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+line-height: 1.6;
+color: var(--dark-color);
+background-color: var(--light-color);
+}
+
+header {
+background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+color: white;
+padding: 1rem 0;
+text-align: center;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+position: relative;
+overflow: hidden;
+}
+
+header::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 5px;
+background: var(--accent-color);
+}
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+
+.auth-buttons {
+position: absolute;
+top: 20px;
+right: 20px;
+display: flex;
+gap: 10px;
+}
+
+.auth-btn {
+padding: 5px 15px;
+border-radius: 20px;
+background: rgba(255,255,255,0.2);
+color: white;
+text-decoration: none;
+font-size: 0.9rem;
+transition: all 0.3s;
+}
+
+.auth-btn:hover {
+background: rgba(255,255,255,0.3);
+}
+
+.cart-btn {
+position: fixed;
+top: 20px;
+right: 20px;
+background: var(--accent-color);
+color: white;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+z-index: 100;
+box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.cart-count {
+position: absolute;
+top: -5px;
+right: -5px;
+background: var(--primary-color);
+color: white;
+width: 22px;
+height: 22px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.8rem;
+}
+
+.cart-panel {
+position: fixed;
+top: 0;
+right: -400px;
+width: 400px;
+height: 100%;
+background: white;
+box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+padding: 20px;
+transition: right 0.3s;
+z-index: 99;
+overflow-y: auto;
+}
+
+.cart-panel.active {
+right: 0;
+}
+
+.cart-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 98;
+opacity: 0;
+visibility: hidden;
+transition: all 0.3s;
+}
+
+.cart-overlay.active {
+opacity: 1;
+visibility: visible;
+}
+
+.cart-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+padding-bottom: 10px;
+border-bottom: 1px solid #eee;
+}
+
+.close-cart {
+background: none;
+border: none;
+font-size: 1.5rem;
+cursor: pointer;
+color: #777;
+}
+
+.cart-item {
+display: flex;
+margin-bottom: 15px;
+padding-bottom: 15px;
+border-bottom: 1px solid #eee;
+}
+
+.cart-item-img {
+width: 80px;
+height: 80px;
+object-fit: cover;
+border-radius: 5px;
+margin-right: 15px;
+}
+
+.cart-item-details {
+flex-grow: 1;
+}
+
+.cart-item-title {
+font-weight: 600;
+margin-bottom: 5px;
+}
+
+.cart-item-price {
+color: var(--accent-color);
+font-weight: 600;
+}
+
+.cart-item-remove {
+background: none;
+border: none;
+color: #ff5252;
+cursor: pointer;
+align-self: flex-start;
+}
+
+.cart-total {
+margin-top: 20px;
+font-size: 1.2rem;
+font-weight: 600;
+text-align: right;
+}
+
+.checkout-btn {
+display: block;
+width: 100%;
+padding: 12px;
+background: var(--primary-color);
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 1rem;
+cursor: pointer;
+margin-top: 20px;
+transition: background 0.3s;
+}
+
+.checkout-btn:hover {
+background: var(--secondary-color);
+}
+
+.section {
+padding: 2rem 0;
+}
+
+.section-title {
+text-align: center;
+margin-bottom: 2rem;
+}
+
+.section-title h2 {
+font-size: 2rem;
+color: var(--primary-color);
+display: inline-block;
+position: relative;
+}
+
+.section-title h2::after {
+content: '';
+position: absolute;
+bottom: -10px;
+left: 50%;
+transform: translateX(-50%);
+width: 80px;
+height: 3px;
+background-color: var(--accent-color);
+}
+
+.products {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 2rem;
+}
+
+.product-card {
+background-color: white;
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.product-img {
+height: 250px;
+overflow: hidden;
+}
+
+.product-img img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+transition: transform 0.5s;
+}
+
+.product-card:hover .product-img img {
+transform: scale(1.05);
+}
+
+.product-info {
+padding: 1.5rem;
+}
+
+.product-info h3 {
+font-size: 1.3rem;
+margin-bottom: 0.5rem;
+color: var(--primary-color);
+}
+
+.product-info p {
+margin-bottom: 1rem;
+color: #666;
+}
+
+.price {
+font-weight: 700;
+color: var(--accent-color);
+font-size: 1.2rem;
+margin: 1rem 0;
+}
+
+.add-to-cart {
+display: inline-block;
+background-color: var(--accent-color);
+color: white;
+padding: 0.6rem 1.5rem;
+border-radius: 50px;
+text-decoration: none;
+font-weight: 600;
+transition: all 0.3s;
+border: none;
+cursor: pointer;
+}
+
+.add-to-cart:hover {
+background-color: #ff6347;
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.set {
+background-color: rgba(46, 139, 87, 0.1);
+border-radius: 10px;
+padding: 2rem;
+margin: 3rem auto;
+max-width: 600px;
+text-align: center;
+border: 2px dashed var(--primary-color);
+}
+
+.set h3 {
+font-size: 1.5rem;
+color: var(--primary-color);
+margin-bottom: 1rem;
+}
+
+/* ???????? ????? */
+.modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 999;
+opacity: 0;
+visibility: hidden;
+transition: all 0.3s;
+}
+
+.modal.active {
+opacity: 1;
+visibility: visible;
+}
+
+.modal-content {
+background: white;
+padding: 30px;
+border-radius: 10px;
+width: 100%;
+max-width: 500px;
+box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+position: relative;
+}
+
+.close-modal {
+position: absolute;
+top: 15px;
+right: 15px;
+font-size: 1.5rem;
+background: none;
+border: none;
+cursor: pointer;
+color: #777;
+}
+
+.form-group {
+margin-bottom: 20px;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+}
+
+.form-control {
+width: 100%;
+padding: 10px;
+border: 1px solid #ddd;
+border-radius: 5px;
+font-size: 1rem;
+}
+
+.submit-btn {
+background: var(--primary-color);
+color: white;
+border: none;
+padding: 12px 20px;
+border-radius: 5px;
+font-size: 1rem;
+cursor: pointer;
+width: 100%;
+transition: background 0.3s;
+}
+
+.submit-btn:hover {
+background: var(--secondary-color);
+}
+
+footer {
+background-color: var(--dark-color);
+color: white;
+text-align: center;
+padding: 2rem 0;
+margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+.products {
+grid-template-columns: 1fr;
+}
+
+.cart-panel {
+width: 320px;
+}
+
+.auth-buttons {
+position: static;
+justify-content: center;
+margin-top: 15px;
+}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<h1>????? ???????? ?? ??????????</h1>
+<p>???????? ? ???????? ??? ??? ???????</p>
+<div class="auth-buttons">
+<a href="#" class="auth-btn" id="login-btn">??????</a>
+<a href="#" class="auth-btn" id="register-btn">??????????</a>
+</div>
+</div>
+</header>
+
+<div class="cart-btn" id="cart-btn">
+<i class="fas fa-shopping-cart"></i>
+<span class="cart-count" id="cart-count">0</span>
+</div>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+
+<div class="cart-panel" id="cart-panel">
+<div class="cart-header">
+<h3>??? ?????</h3>
+<button class="close-cart" id="close-cart">&times;</button>
+</div>
+<div id="cart-items"></div>
+<div class="cart-total">
+??????: <span id="cart-total">0</span> ???
+</div>
+<button class="checkout-btn" id="checkout-btn">???????? ??????????</button>
+</div>
+
+<!-- ???????? ????? ?????????? -->
+<div class="modal" id="register-modal">
+<div class="modal-content">
+<button class="close-modal" id="close-register">&times;</button>
+<h2>??????????</h2>
+<form id="register-form">
+<div class="form-group">
+<label for="reg-email">Email</label>
+<input type="email" id="reg-email" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="reg-password">??????</label>
+<input type="password" id="reg-password" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="reg-name">??'?</label>
+<input type="text" id="reg-name" class="form-control" required>
+</div>
+<button type="submit" class="submit-btn">???????????????</button>
+</form>
+</div>
+</div>
+
+<!-- ???????? ????? ????? -->
+<div class="modal" id="login-modal">
+<div class="modal-content">
+<button class="close-modal" id="close-login">&times;</button>
+<h2>????</h2>
+<form id="login-form">
+<div class="form-group">
+<label for="login-email">Email</label>
+<input type="email" id="login-email" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="login-password">??????</label>
+<input type="password" id="login-password" class="form-control" required>
+</div>
+<button type="submit" class="submit-btn">??????</button>
+</form>
+</div>
+</div>
+
+<!-- ???????? ????? ?????????? ?????????? -->
+<div class="modal" id="checkout-modal">
+<div class="modal-content">
+<button class="close-modal" id="close-checkout">&times;</button>
+<h2>?????????? ??????????</h2>
+<form id="checkout-form" action="https://formsubmit.co/popichko.mikola@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="???? ??????????">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
+
+<div class="form-group">
+<label for="checkout-name">??'?</label>
+<input type="text" id="checkout-name" name="??'?" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="checkout-email">Email</label>
+<input type="email" id="checkout-email" name="Email" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="checkout-phone">???????</label>
+<input type="tel" id="checkout-phone" name="???????" class="form-control" required>
+</div>
+<div class="form-group">
+<label for="checkout-comment">???????? ?? ??????????</label>
+<textarea id="checkout-comment" name="????????" class="form-control" rows="3"></textarea>
+</div>
+<input type="hidden" id="checkout-items" name="??????">
+<input type="hidden" id="checkout-total" name="????">
+<button type="submit" class="submit-btn">??????????? ??????????</button>
+</form>
+</div>
+</div>
+
+<main class="container">
+<section class="section">
+<div class="section-title">
+<h2>???? ??????</h2>
+</div>
+
+<div class="products">
+<!-- ???????? -->
+<div class="product-card">
+<div class="product-img">
+<img src="bookmark.jpg" alt="???????? ????????">
+</div>
+<div class="product-info">
+<h3>???????? "?????"</h3>
+<p>??????? ???????? ? ??????? ??????? ? ?????????? ????????. ???????? ??? ???? ? ???????.</p>
+<div class="price">10 ???</div>
+<button class="add-to-cart" data-id="1" data-name="???????? '?????'" data-price="10" data-image="bookmark.jpg">?????? ?? ??????</button>
+</div>
+</div>
+
+<!-- ????????? -->
+<div class="product-card">
+<div class="product-img">
+<img src="stressball.jpg" alt="????????? ??????">
+</div>
+<div class="product-info">
+<h3>????????? "???????"</h3>
+<p>?'??? ?????? ? ???????? ??? ?????? ??????. ??????? ?????? ??? ??????.</p>
+<div class="price">15 ???</div>
+<button class="add-to-cart" data-id="2" data-name="????????? '???????'" data-price="15" data-image="stressball.jpg">?????? ?? ??????</button>
+</div>
+</div>
+</div>
+
+<!-- ????? -->
+<div class="set">
+<h3>????? "??????"</h3>
+<p>1 ???????? + 1 ?????????</p>
+<div class="price">20 ??? (???????? 5 ???)</div>
+<button class="add-to-cart" data-id="3" data-name="????? '??????'" data-price="20" data-image="set.jpg">?????? ?? ??????</button>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<p>????????: popichko.mikola@gmail.com | 099 123 45 67</p>
+<p>&copy; 2023 ????? ???????? ?? ??????????</p>
+</div>
+</footer>
+
+<script>
+// ?????
+let cart = [];
+const cartBtn = document.getElementById('cart-btn');
+const cartPanel = document.getElementById('cart-panel');
+const cartOverlay = document.getElementById('cart-overlay');
+const closeCart = document.getElementById('close-cart');
+const cartItemsContainer = document.getElementById('cart-items');
+const cartCount = document.getElementById('cart-count');
+const cartTotal = document.getElementById('cart-total');
+const checkoutBtn = document.getElementById('checkout-btn');
+const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+// ???????? ?????
+const registerModal = document.getElementById('register-modal');
+const loginModal = document.getElementById('login-modal');
+const checkoutModal = document.getElementById('checkout-modal');
+const loginBtn = document.getElementById('login-btn');
+const registerBtn = document.getElementById('register-btn');
+const closeRegister = document.getElementById('close-register');
+const closeLogin = document.getElementById('close-login');
+const closeCheckout = document.getElementById('close-checkout');
+
+// ?????????/???????? ??????
+cartBtn.addEventListener('click', () => {
+cartPanel.classList.add('active');
+cartOverlay.classList.add('active');
+});
+
+closeCart.addEventListener('click', () => {
+cartPanel.classList.remove('active');
+cartOverlay.classList.remove('active');
+});
+
+cartOverlay.addEventListener('click', () => {
+cartPanel.classList.remove('active');
+cartOverlay.classList.remove('active');
+});
+
+// ?????????/???????? ????????? ?????
+registerBtn.addEventListener('click', (e) => {
+e.preventDefault();
+registerModal.classList.add('active');
+});
+
+loginBtn.addEventListener('click', (e) => {
+e.preventDefault();
+loginModal.classList.add('active');
+});
+
+closeRegister.addEventListener('click', () => {
+registerModal.classList.remove('active');
+});
+
+closeLogin.addEventListener('click', () => {
+loginModal.classList.remove('active');
+});
+
+closeCheckout.addEventListener('click', () => {
+checkoutModal.classList.remove('active');
+});
+
+// ????????? ??????? ?? ??????
+addToCartButtons.forEach(button => {
+button.addEventListener('click', () => {
+const id = button.getAttribute('data-id');
+const name = button.getAttribute('data-name');
+const price = parseFloat(button.getAttribute('data-price'));
+const image = button.getAttribute('data-image');
+
+// ???????????, ?? ????? ??? ? ? ??????
+const existingItem = cart.find(item => item.id === id);
+
+if (existingItem) {
+existingItem.quantity += 1;
+} else {
+cart.push({
+id,
+name,
+price,
+image,
+quantity: 1
+});
+}
+
+updateCart();
+
+// ??????????? ????? ??? ????????? ??????
+cartPanel.classList.add('active');
+cartOverlay.classList.add('active');
+});
+});
+
+// ????????? ??????
+function updateCart() {
+// ????????? ????????? ???????
+const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+cartCount.textContent = totalCount;
+
+// ????????? ?????? ???????
+cartItemsContainer.innerHTML = '';
+
+if (cart.length === 0) {
+cartItemsContainer.innerHTML = '<p>????? ????????</p>';
+} else {
+cart.forEach(item => {
+const cartItemElement = document.createElement('div');
+cartItemElement.className = 'cart-item';
+
+cartItemElement.innerHTML = `
+<img src="${item.image}" alt="${item.name}" class="cart-item-img">
+<div class="cart-item-details">
+<h4 class="cart-item-title">${item.name}</h4>
+<div class="cart-item-price">${item.price} ??? × ${item.quantity} = ${item.price * item.quantity} ???</div>
+</div>
+<button class="cart-item-remove" data-id="${item.id}">&times;</button>
+`;
+
+cartItemsContainer.appendChild(cartItemElement);
+});
+}
+
+// ????????? ???????? ????
+const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+cartTotal.textContent = totalPrice;
+}
+
+// ????????? ??????? ? ??????
+cartItemsContainer.addEventListener('click', (e) => {
+if (e.target.classList.contains('cart-item-remove')) {
+const id = e.target.getAttribute('data-id');
+cart = cart.filter(item => item.id !== id);
+updateCart();
+}
+});
+
+// ?????????? ??????????
+checkoutBtn.addEventListener('click', () => {
+if (cart.length === 0) {
+alert('????? ????????');
+return;
+}
+
+// ?????????? ????????? ???? ?????
+document.getElementById('checkout-items').value = cart.map(item =>
+`${item.name} (${item.quantity} ??. × ${item.price} ???)`
+).join('\n');
+
+document.getElementById('checkout-total').value = cart.reduce((sum, item) =>
+sum + (item.price * item.quantity), 0
+) + ' ???';
+
+// ??????????? ???????? ????? ??????????
+cartPanel.classList.remove('active');
+cartOverlay.classList.remove('active');
+checkoutModal.classList.add('active');
+});
+
+// ??????? ????? ??????????
+document.getElementById('register-form').addEventListener('submit', (e) => {
+e.preventDefault();
+alert('?????????? ???????! ????? ?? ?????? ??????.');
+registerModal.classList.remove('active');
+});
+
+// ??????? ????? ?????
+document.getElementById('login-form').addEventListener('submit', (e) => {
+e.preventDefault();
+alert('???? ????????!');
+loginModal.classList.remove('active');
+});
+
+// ??????? ????? ??????????
+document.getElementById('checkout-form').addEventListener('submit', function() {
+// ???????? ????? ????? ??????????
+cart = [];
+updateCart();
+
+// ????????? ???????????? ??? ??????? ??????????
+setTimeout(() => {
+alert('?????????? ?????????! ?? ??\'??????? ? ???? ?????????? ?????.');
+}, 1000);
+});
+</script>
+</body>
+</html>
